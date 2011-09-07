@@ -7,8 +7,19 @@
 
 # On the agenda
 
+* Brief overview of Erlang
 * Datatypes
 * What a program looks like
+* Mnesia
+
+!SLIDE
+
+# Brief overview
+* Compiled, functional, dynamic
+* Variables that don't
+* Lightweight processes, message sending
+* Pattern matching, tail call optimisation
+* Hot code loading
 
 !SLIDE
 
@@ -42,6 +53,8 @@
 @@@ erlang
     <<10,20>>
     <<"ABC">>
+    <<1,17,42:16>>
+    <<1024/utf8>>
 @@@
 
 !SLIDE
@@ -205,6 +218,15 @@
       print([1, "two", 3]),                  12
       quit().                                13
 @@@
+
+!SLIDE
+
+# What we've covered
+
+* Brief overview of Erlang
+* Datatypes
+* What a program looks like
+* Mnesia
 
 !SLIDE
 
