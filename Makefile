@@ -5,3 +5,6 @@ open:
 clean:
 	rm *.beam
 	rm *.html
+install:
+	bundle install
+	easy_install pygments
