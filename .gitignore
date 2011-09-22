@@ -3,3 +3,4 @@
 *.html
 Gemfile.lock
 *.dump
+Mnesia.nonode@nohost
