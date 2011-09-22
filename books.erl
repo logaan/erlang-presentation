@@ -1,7 +1,9 @@
 -module(books).
 -compile(export_all).
+
 -include_lib("stdlib/include/qlc.hrl").
 -include_lib("eunit/include/eunit.hrl").
+
 -record(book, {isbn, author, title}).
 
 init() ->
@@ -17,17 +19,15 @@ insert(Book) ->
     mnesia:write(Book)
   end).
 
-select_all() -> 
-  {atomic, Results} = mnesia:transaction( 
-  fun() ->
-    qlc:eval( qlc:q(
-      [ X || X <- mnesia:table(book) ] 
+select_author_by_title(Title) -> 
+  {atomic, Results} = mnesia:transaction(fun() ->
+    qlc:eval(qlc:q(
+      [ X#book.author || X <- mnesia:table(book), Title == X#book.title ] 
     )) 
-  end ),
+  end),
   Results.
 
 in_and_out_test() ->
-  Book = #book{ isbn=65786970, author="Joe", title="Girlang" },
   init(),
-  insert(Book),
-  [Book] = select_all().
+  insert(#book{ isbn=65786970, author="Joe", title="Girlang" }),
+  ["Joe"] = select_author_by_title("Girlang").
