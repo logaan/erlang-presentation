@@ -249,7 +249,13 @@
 
 !SLIDE
 
-# References
+# Thank you
 
-* [http://erlang.org/doc/reference_manual](http://erlang.org/doc/reference_manual)
-* [http://erldocs.com/](http://erldocs.com/)
+### This talk
+* github.com/logaan/erlang-presentation
+
+### References
+* erldocs.com
+* wikibooks.org/wiki/Erlang_Programming
+* erlang.org/doc/reference\_manual/users\_guide.html
+
