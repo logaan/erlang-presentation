@@ -1,7 +1,9 @@
 default:
-	slidedown talk.md > talk.html
-open:
+	slidedown talk.markdown > talk.html
 	open talk.html
+mnesia:
+	slidedown mnesia_talk.markdown > mnesia_talk.html
+	open mnesia_talk.html
 clean:
 	rm *.beam
 	rm *.html
