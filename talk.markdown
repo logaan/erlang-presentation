@@ -10,7 +10,6 @@
 * Brief overview of Erlang
 * Datatypes
 * What a program looks like
-* Mnesia
 
 !SLIDE
 
@@ -201,7 +200,7 @@
 
 !SLIDE
 
-# Services
+# Global services
 
 @@@ erlang
     start() ->                               1
@@ -221,31 +220,11 @@
 
 !SLIDE
 
-# Mnesia
-
-!SLIDE
-
-# Mnesia queries
-
-@@@ erlang
-    [ X#book.author ||
-      X <- mnesia:table(book),
-      Title == X#book.title ]
-    
-
-    SELECT name
-    FROM author
-    WHERE title = "DERP"
-@@@
-
-!SLIDE
-
 # What we've covered
 
 * Brief overview of Erlang
 * Datatypes
 * What a program looks like
-* Mnesia
 
 !SLIDE
 
