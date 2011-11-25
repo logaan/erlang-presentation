@@ -3,27 +3,102 @@
 # Mnesia is beyond NoSQL, It's NoQL
 
 !SLIDE
-* Erlang ships with a mature NoQL database called Mnesia.
-  * erlang has been around for 10 years
+## Boring header stuff
+@@@ erlang
+    -module(books).
+    -compile(export_all).
+
+    -include_lib("stdlib/include/qlc.hrl").
+    -include_lib("eunit/include/eunit.hrl").
+@@@
 
 !SLIDE
-# It allows you to store any erlang term with no need to serialse, even lambdas.
+## Records like a RDBMS
+@@@ erlang
+    -record(book, {isbn, author, title}).
+@@@
 
 !SLIDE
-# You query the database with erlang its self.
+## Less config than Oracle
+@@@ erlang
+    init() ->
+      mnesia:create_schema([node()]),
+      mnesia:start(),
+      mnesia:create_table(book, [
+        {attributes,
+          record_info(fields, book)},
+        {ram_copies, [node()]}]).
+@@@
 
 !SLIDE
-# It's distributed with eventual consistency.
+## Transactions are just lambdas
+@@@ erlang
+    insert(Book) ->
+      mnesia:transaction(fun() ->
+        mnesia:write(Book)
+      end).
+@@@
 
 !SLIDE
-# And it's fast - soft realtime fast.
+## Describe your data with normal code
+@@@ erlang
+    high_isbn(#book{ isbn=Isbn }) ->
+      (Isbn > 60000000) and
+      (length(integer_to_list(Isbn)) == 8).
+@@@
 
 !SLIDE
-# I'll also be covering some of the idioms of erlang and a brief introduction to the language to put the database in its context.
+## List comprehension to query
+@@@ erlang
+      [ X#book.author ||
+        X <- mnesia:table(book),
+        Title == X#book.title,
+        high_isbn(X)])) 
+@@@
+
+!SLIDE
+## That last slide was a lie
+@@@ erlang
+    select_author_by_title(Title) -> 
+      {atomic, Results} = mnesia:transaction(
+        fun() ->
+          qlc:eval(qlc:q(
+            ...
+          ))
+        end),
+      Results.
+@@@
+
+!SLIDE
+## Which gives us
+@@@ erlang
+    in_and_out_test() ->
+      init(),
+      insert(#book{
+        isbn=65786970,
+        author="Joe",
+        title="Girlang" }),
+      ["Joe"] =
+      select_author_by_title("Girlang").
+@@@ erlang
+
+!SLIDE
+## Drawbacks
+* Erlang only interface
+* 4gb per table per node
+* Manually resolve network split
+
+!SLIDE
+## In summary
+* Store anything
+* Query with erlang
+* Distributed
+* Super fast
+* Mature
 
 !SLIDE
 
-# Thank you
+## Thank you
 
 ### This talk
 * github.com/logaan/erlang-presentation
@@ -34,37 +109,4 @@
 * http://noss.github.com/2009/04/04/mnesia-sucks-not.html
 * http://vimeo.com/17162381
 
-!SLIDE
-
-# Random facts
-* Used by couchdb
-* Used commercially for over 10 years
-* Can scale out to 50 nodes
-* Build in support for sharding
-* Incremental backup
-* Distribution to several nodes gives
-  * Fault tollerance
-  * Efficiency
-    * DB is on the same machine
-    * And in the same address space
-    * As your application
-* A transaction is just a fun
-* Table types
-  * ram_copies
-    * specify which nodes will hold ram copies
-    * backed up at regular intervals
-    * not journaled
-  * disc_copies
-    * journals
-    * can re-create ram copy from initial dump + log
-  * disc_only_copies
-    * full disc copy
-    * slower, obviously
-    * doesn't have to be re-built from log
-
-# Drawbacks
-* Erlang only interface
-* Each table per node can only store 4gb of data
-  * Because mnesia internally uses 32bit ints for addresses
-  * Switching to a 64bit system will not solve this
 

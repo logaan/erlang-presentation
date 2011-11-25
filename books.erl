@@ -11,7 +11,7 @@ init() ->
   mnesia:start(),
   mnesia:create_table(book, [
     {attributes, record_info(fields, book)},
-    {disc_copies, [node()] }
+    {ram_copies, [node()] }
   ]).
 
 insert(Book) ->
@@ -19,10 +19,18 @@ insert(Book) ->
     mnesia:write(Book)
   end).
 
+high_isbn(#book{ isbn=Isbn}) ->
+  (Isbn > 60000000) and
+  (length(integer_to_list(Isbn)) == 8).
+
 select_author_by_title(Title) -> 
   {atomic, Results} = mnesia:transaction(fun() ->
     qlc:eval(qlc:q(
-      [ X#book.author || X <- mnesia:table(book), Title == X#book.title ] 
+      [
+        X#book.author ||
+        X <- mnesia:table(book),
+        Title == X#book.title,
+        high_isbn(X)] 
     )) 
   end),
   Results.
